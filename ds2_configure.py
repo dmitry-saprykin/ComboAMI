@@ -804,7 +804,7 @@ def construct_dse():
 
 def construct_agent():
     logger.exe('sudo mkdir -p /var/lib/datastax-agent/conf')
-    logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax-agent/conf')
+    logger.exe('sudo chown cassandra:cassandra /var/lib/datastax-agent/conf')
 
     with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
         if options.opscenterip:
@@ -1044,9 +1044,9 @@ def construct_core_site():
         logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
         logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
 
-        hadoop_ubuntu_dir = os.path.join(hadoop_tmp_dir, 'ubuntu')
-        logger.exe('sudo mkdir -p %s' % hadoop_ubuntu_dir)
-        logger.exe('sudo chown -R ubuntu:ubuntu %s' % hadoop_ubuntu_dir)
+        hadoop_cassandra_dir = os.path.join(hadoop_tmp_dir, 'cassandra')
+        logger.exe('sudo mkdir -p %s' % hadoop_cassandra_dir)
+        logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_cassandra_dir)
 
         with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
             f.write(core_site)
@@ -1091,8 +1091,8 @@ def sync_clocks():
 
 def additional_pre_configurations():
     # Get required keys for Ubuntu
-    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
-    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
+    logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
+    logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')    
 
 def additional_post_configurations():
     if options.base64postscript:

@@ -1,6 +1,3 @@
-# Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20140227/
-# Via: http://cloud-images.ubuntu.com/locator/ec2/: "12.04 LTS amd64 ebs|hvm:instance-store"
-# Current as of 2/5/2014
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
@@ -9,34 +6,38 @@ then
     exit
 fi
 
-# Update the Kernel to 2.8 for Ubuntu 12.04 LTS (Can remove on 14.04 LTS)
-sudo apt-get -y update
-sudo apt-get install -y linux-image-generic-lts-raring linux-headers-generic-lts-raring
-sudo shutdown -r now
+# Update packages
+sudo yum -y update
 
 # Prime for Java installation
-sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+#cd /opt/
+#sudo wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-linux-x64.tar.gz"
+#sudo tar xzf jdk-7u75-linux-x64.tar.gz
+#cd /opt/jdk1.7.0_75/
+#sudo alternatives --install /usr/bin/java java /opt/jdk1.7.0_75/bin/java 2
+sudo yum -y install java-1.7.0-openjdk
+alternatives --config java
+
+export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/
+export PATH=$PATH:/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/
+
+#Install jna
+sudo yum -y install jna
+
+# Install cloud-init
+sudo yum -y install cloud-init
 
 # Install Git
-sudo apt-get -y install git
+sudo yum -y install git
 
 # Git these files on to the server's home directory
 git config --global color.ui auto
 git config --global color.diff auto
 git config --global color.status auto
-git clone https://github.com/riptano/ComboAMI.git datastax_ami
+git clone https://github.com/dmitry-saprykin/ComboAMI.git datastax_ami
 cd datastax_ami
 git checkout $(head -n 1 presetup/VERSION)
 
-# Install Java
-# http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
-sudo add-apt-repository -y ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install -y oracle-java7-installer oracle-java7-set-default
-
-# Setup java alternatives
-sudo update-java-alternatives -s java-7-oracle
-export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 
 # Begin the actual priming
 git pull
@@ -47,10 +48,6 @@ find /lib/modules |grep 'raid[456]' | sudo xargs -i rm -rf {} && sudo depmod -a
 sudo update-initramfs -k all -c
 gunzip -c /boot/initrd.img-*-generic | cpio --list | grep raid
 
-sudo chown -R ubuntu:ubuntu . 
+sudo chown -R cassandra:cassandra . 
 rm -rf ~/.bash_history 
 history -c
-
-
-
-# git pull && rm -rf ~/.bash_history && history -c

@@ -34,18 +34,18 @@ def pipe(command1, command2):
 
 def install_software():
     # Setup Repositories
-    exe('sudo apt-get -y update')
+    exe('sudo yum -y update')
     time.sleep(5)
-    exe('sudo apt-get -y update')
+    exe('sudo yum -y update')
 
     while True:
-        output = exe('sudo apt-get -y upgrade')
+        output = exe('sudo yum -y upgrade')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install other recommended tools
     while True:
-        output = exe('sudo apt-get -y install --fix-missing libjna-java htop '
+        output = exe('sudo yum -y install --fix-missing libjna-java htop '
                      'emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs '
                      'zip unzip ruby openssl libopenssl-ruby curl maven2 ant '
                      'liblzo2-dev ntp subversion python-pip tree unzip ruby '
@@ -55,12 +55,12 @@ def install_software():
 
     # Install RAID setup
     while True:
-        output = exe('sudo apt-get -y --no-install-recommends install mdadm')
+        output = exe('sudo yum -y --no-install-recommends install mdadm')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Preinstall Maven packages as a convenience
-    exe('sudo -u ubuntu mvn install')
+    exe('sudo -u cassandra mvn install')
     time.sleep(5)
 
     # Preinstall Cassandra from source to get all the dependencies for convenience
@@ -73,13 +73,12 @@ def install_software():
 
 def setup_profiles():
     # Setup a link to the motd script that is provided in the git repository
-    file_to_open = '/home/ubuntu/.profile'
+    file_to_open = '/home/cassandra/.profile'
     exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'a') as f:
         f.write("""
     python datastax_ami/ds4_motd.py
-    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
-    export HADOOP_HOME=/usr/share/dse/hadoop
+    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/
     """)
     exe('sudo chmod 644 ' + file_to_open)
 
@@ -88,11 +87,10 @@ def setup_profiles():
     exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'w') as f:
         f.write("""
-    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
-    export HADOOP_HOME=/usr/share/dse/hadoop
+    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/
     """)
     exe('sudo chmod 644 ' + file_to_open)
-    os.chdir('/home/ubuntu')
+    os.chdir('/home/cassandra')
 
 def create_initd():
     # Create init.d script
@@ -109,14 +107,14 @@ def create_initd():
     ### END INIT INFO
 
     # Make sure variables get set
-    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/
 
     # Setup system properties
     echo 1 | sudo tee /proc/sys/vm/overcommit_memory
 
     # Clear old ami.log
     echo "\n======================================================\n" >> ami.log
-    cd /home/ubuntu/datastax_ami
+    cd /home/cassandra/datastax_ami
     python ds0_updater.py
     """
     exe('sudo touch /etc/init.d/start-ami-script.sh')
@@ -141,14 +139,14 @@ def setup_limits_conf():
     # pipe('echo "* - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
     # pipe('echo "* - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
 
-    # for Ubuntu
-    pipe('echo "root - memlock unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
-    pipe('echo "root - nofile 100000"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
-    pipe('echo "root - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
-    pipe('echo "root - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    # for Ubuntu (not required here)
+    #pipe('echo "root - memlock unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    #pipe('echo "root - nofile 100000"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    #pipe('echo "root - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    #pipe('echo "root - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
 
-    # for CentOS (not required here)
-    # pipe('echo "* - nproc 32768"', 'sudo tee -a /etc/security/limits.d/90-nproc.conf')
+    # for CentOS
+    pipe('echo "* - nproc 32768"', 'sudo tee -a /etc/security/limits.d/90-nproc.conf')
 
 
 def setup_sysctl():

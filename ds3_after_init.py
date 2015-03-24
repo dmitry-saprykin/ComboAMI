@@ -115,7 +115,7 @@ def smoke_test():
         urllib.urlretrieve (smokeURL, 'smoke.tar.gz')
         log = exe('tar xvf smoke.tar.gz', True)
 
-        os.chdir('/home/ubuntu/smoke')
+        os.chdir('/home/cassandra/smoke')
         log += "-----------------------------------------------------" + "\n"
         log += "-------------------- SMOKE TESTS --------------------" + "\n"
         log += "-----------------------------------------------------" + "\n"
@@ -134,7 +134,7 @@ def smoke_test():
         log += "-----------------------------------------------------" + "\n"
         log += "--------------------- END TESTS ---------------------" + "\n"
         log += "-----------------------------------------------------" + "\n"
-        os.chdir('/home/ubuntu/')
+        os.chdir('/home/cassandra/')
 
         # Email smoke test results
         email_report('SMOKE-TESTS ::: ' + smokeFile + ' ::: ' + config_data['publichostname'], log)

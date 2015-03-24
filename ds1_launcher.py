@@ -27,13 +27,13 @@ def initial_configurations():
 
 
         # Change permission back to being ubuntu's and cassandra's
-        logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
+        logger.exe('sudo chown -hR cassandra:cassandra /home/cassandra')
         logger.exe('sudo chown -hR cassandra:cassandra /raid0/cassandra', False)
         logger.exe('sudo chown -hR cassandra:cassandra /mnt/cassandra', False)
 
         # Ensure permissions
         directory_list = [
-            ('/home/ubuntu', 'ubuntu', 'ubuntu'),
+            ('/home/cassandra', 'cassandra', 'cassandra'),
             ('/raid0/cassandra', 'cassandra', 'cassandra'),
             ('/mnt/cassandra', 'cassandra', 'cassandra')
         ]
@@ -171,7 +171,7 @@ def wait_for_seed():
 
 def launch_opscenter():
     logger.info('Starting a background process to start OpsCenter after a given delay...')
-    subprocess.Popen(shlex.split('sudo -u ubuntu python /home/ubuntu/datastax_ami/ds3_after_init.py &'))
+    subprocess.Popen(shlex.split('sudo -u cassandra python /home/cassandra/datastax_ami/ds3_after_init.py &'))
 
 def start_services():
     # Wait for system setup changes to settle
