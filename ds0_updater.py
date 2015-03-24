@@ -20,22 +20,6 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
     if force_commit:
         logger.exe('git reset --hard %s' % force_commit)
 
-    # ensure the latest commit is signed and verified
-    while True:
-        logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key', expectError=True)
-        output = logger.exe('git log --pretty="format:%G?" --show-signature HEAD^..HEAD')
-
-        if "Can't check signature" in output[0]:
-            logger.info('gpg keys cleared on startup. Trying again...')
-            continue
-
-        rsa_check = 'using RSA key ID 7123CDFD\n'
-        signature_check = 'Good signature from "Joaquin Casares (DataStax AMI) <joaquin@datastax.com>"\n'
-        if not rsa_check in output[0] or not signature_check in output[0]:
-            logger.error('Scripts using a non-signed commit. Please ensure commit is valid.')
-            logger.error('    If it was a missed signature, feel free to open a ticket at https://github.com/riptano/ComboAMI.')
-        break
-
 # Start AMI start code
 try:
     import ds1_launcher
