@@ -45,7 +45,7 @@ def install_software():
 
     # Install other recommended tools
     while True:
-        output = exe('sudo yum -y install --fix-missing libjna-java htop '
+        output = exe('sudo yum -y install libjna-java htop '
                      'emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs '
                      'zip unzip ruby openssl libopenssl-ruby curl maven2 ant '
                      'liblzo2-dev ntp subversion python-pip tree unzip ruby '
