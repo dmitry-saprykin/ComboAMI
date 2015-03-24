@@ -31,7 +31,7 @@ import conf
 
 instance_data = {}
 config_data = {}
-config_data['conf_path'] = os.path.expanduser("/etc/cassandra/")
+config_data['conf_path'] = os.path.expanduser("/etc/cassandra/conf/")
 config_data['opsc_conf_path'] = os.path.expanduser("/etc/opscenter/")
 options = False
 
@@ -353,7 +353,7 @@ def clean_installation():
     logger.info('Performing deployment install...')
 
     # Hold onto baked limits conf before installation
-    logger.exe('sudo mv /etc/security/limits.d/cassandra.conf /etc/security/limits.d/cassandra.conf.bak')
+    #logger.exe('sudo mv /etc/security/limits.d/cassandra.conf /etc/security/limits.d/cassandra.conf.bak')
 
     if conf.get_config("AMI", "Type") == "Community":
         if options.release and options.release.startswith('1.0'):
@@ -454,7 +454,7 @@ def clean_installation():
     logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
 
     # Replace baked image conf after installation
-    logger.exe('sudo mv /etc/security/limits.d/cassandra.conf.bak /etc/security/limits.d/cassandra.conf')
+    #logger.exe('sudo mv /etc/security/limits.d/cassandra.conf.bak /etc/security/limits.d/cassandra.conf')
 
 def opscenter_installation():
     if instance_data['launchindex'] == 0 and options.opscenter != "no":
