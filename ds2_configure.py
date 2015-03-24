@@ -998,6 +998,7 @@ def prepare_for_raid():
 
     # Not enough drives to RAID together.
     elif len(devices) == 1:
+        print devices
         mnt_point = format_xfs(devices)
     # Single storage
     else:
