@@ -1058,7 +1058,7 @@ def construct_mapred_site():
 
 def sync_clocks():
     # Confirm that NTP is installed
-    logger.exe('sudo apt-get -y install ntp')
+    logger.exe('sudo yum -y install ntp')
 
     with open('/etc/ntp.conf', 'r') as f:
             ntp_conf = f.read()
@@ -1082,8 +1082,9 @@ def sync_clocks():
 
 def additional_pre_configurations():
     # Get required keys for Ubuntu
-    logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
-    logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')    
+    #logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
+    #logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
+    pass    
 
 def additional_post_configurations():
     if options.base64postscript:
@@ -1091,7 +1092,7 @@ def additional_post_configurations():
         process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
-    logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
+    #logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
 
 def run():
     # Remove script files
