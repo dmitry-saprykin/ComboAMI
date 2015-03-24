@@ -900,7 +900,7 @@ def mount_raid(devices):
     # Continuously create the Raid device, in case there are errors
     raid_created = False
     while not raid_created:
-        logger.exe('sudo mdadm --force --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1}'.format(len(partitions), partion_list), expectError=True)
+        logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1} --force '.format(len(partitions), partion_list), expectError=True)
         raid_created = True
 
         logger.pipe('echo DEVICE {0}'.format(partion_list), 'sudo tee /etc/mdadm.conf')
