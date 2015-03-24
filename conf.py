@@ -3,7 +3,7 @@
 
 import ConfigParser
 
-configfile = '/home/ubuntu/datastax_ami/ami.conf'
+configfile = '/home/cassandra/datastax_ami/ami.conf'
 
 config = ConfigParser.RawConfigParser()
 config.read(configfile)

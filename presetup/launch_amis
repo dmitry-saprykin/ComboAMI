@@ -175,7 +175,7 @@ def launch():
             os.path.join(pem_home, instance.placement[:-1] + '.pem'))
             scp_string += ' %s' % (os.path.join(pem_home, 'cert-*.pem'))
             scp_string += ' %s' % (os.path.join(pem_home, 'pk-*.pem'))
-            scp_string += ' ubuntu@%s:' % (instance.ip_address)
+            scp_string += ' cassandra@%s:' % (instance.ip_address)
 
             print scp_string
 
@@ -193,7 +193,7 @@ def launch():
             ssh_string += ' -o StrictHostKeyChecking=no'
             ssh_string += ' -i %s' % (
             os.path.join(pem_home, instance.placement[:-1] + '.pem'))
-            ssh_string += ' ubuntu@%s' % (instance.ip_address)
+            ssh_string += ' cassandra@%s' % (instance.ip_address)
 
             print ssh_string
 
