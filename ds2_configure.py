@@ -997,9 +997,13 @@ def prepare_for_raid():
         mnt_point = mount_raid(devices)
 
     # Not enough drives to RAID together.
-    else:
+    elif len(devices) == 1:
         mnt_point = format_xfs(devices)
-
+    # Single storage
+    else:
+        logger.exe('sudo mkdir -p /cassandra-data/' % hadoop_tmp_dir)
+        mnt_point = '/cassandra-data/'
+        
     if not options.raidonly:
         # Change cassandra.yaml to point to the new data directories
         with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
