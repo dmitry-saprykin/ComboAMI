@@ -337,21 +337,12 @@ def confirm_authentication():
             exit_path("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
 
 def setup_repos():
-    # Add repos
-    if conf.get_config("AMI", "Type") == "Enterprise":
-        logger.pipe('echo "deb http://{0}:{1}@debian.datastax.com/enterprise stable main"'.format(options.username, options.password), 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
-    else:
-        logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
-
-    # Add repokeys
-    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/DataStax.key')
-
     # Perform the install
-    logger.exe('sudo apt-get update')
+    logger.exe('sudo yum -y update')
     time_in_loop = time.time()
     logger.info('Update loop...')
     while time.time() - time_in_loop < 10 * 60:
-        output = logger.exe('sudo apt-get update')
+        output = logger.exe('sudo yum -y update')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
         time.sleep(2 + random.randint(0, 5))
@@ -369,20 +360,20 @@ def clean_installation():
             cassandra_release = options.release
             if cassandra_release == '1.0.11-1':
                 cassandra_release = '1.0.11'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc={1}'.format(cassandra_release, options.release))
+            logger.exe('sudo yum install -y python-cql datastax-agent cassandra={0} dsc={1}'.format(cassandra_release, options.release))
             conf.set_config('AMI', 'package', 'dsc')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.1'):
             dsc_release = cassandra_release = options.release
             if not dsc_release in ['1.1.1', '1.1.2', '1.1.3', '1.1.5']:
                 dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc1.1={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo yum install -y python-cql datastax-agent cassandra={0} dsc1.1={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc1.1')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.2'):
             dsc_release = cassandra_release = options.release
             dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo yum install -y python-cql datastax-agent cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
@@ -392,7 +383,7 @@ def clean_installation():
                 dsc_release = dsc_release + '-2'
             else:
                 dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc20={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo yum install -y python-cql datastax-agent cassandra={0} dsc20={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
@@ -401,12 +392,12 @@ def clean_installation():
             dsc_release = dsc_release + '-1'
             if cassandra_release == '2.1.0':
                 cassandra_release = cassandra_release + '-2'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc21={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo yum install -y python-cql datastax-agent cassandra={0} dsc21={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc21')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
         else:
-            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc21')
+            logger.exe('sudo yum install -y python-cql datastax-agent dsc21')
             conf.set_config('AMI', 'package', 'dsc21')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
@@ -416,7 +407,7 @@ def clean_installation():
         config_data['conf_path'] = os.path.expanduser("/etc/dse/cassandra/")
 
         if options.release:
-            install_list = 'sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
+            install_list = 'sudo yum install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
             if options.release.startswith('1'):
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
@@ -448,7 +439,7 @@ def clean_installation():
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
-            logger.exe('sudo apt-get install -y dse-full')
+            logger.exe('sudo yum install -y dse-full')
             conf.set_config('AMI', 'package', 'dse-full')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'False')
@@ -468,7 +459,7 @@ def clean_installation():
 def opscenter_installation():
     if instance_data['launchindex'] == 0 and options.opscenter != "no":
         logger.info('Installing OpsCenter...')
-        logger.exe('sudo apt-get install -y opscenter libssl0.9.8')
+        logger.exe('sudo yum install -y opscenter')
         logger.exe('sudo service opscenterd stop')
         if options.opscenterssl:
             logger.exe('sudo /usr/share/opscenter/bin/setup.py')

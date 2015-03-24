@@ -60,6 +60,15 @@ gpgcheck=0
 EOF
 sudo mv ./epel-apache-maven.repo /etc/yum.repos.d/epel-apache-maven.repo
 
+cat > ./datastax.repo << EOF
+[datastax] 
+name = DataStax Repo for Apache Cassandra
+baseurl = http://rpm.datastax.com/community
+enabled = 1
+gpgcheck = 0
+EOF
+sudo mv ./datastax.repo /etc/yum.repos.d/datastax.repo
+
 sudo yum -y groupinstall "Development Tools"
 sudo yum -y install openssl-devel
 
