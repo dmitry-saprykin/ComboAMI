@@ -1060,24 +1060,24 @@ def sync_clocks():
     # Confirm that NTP is installed
     logger.exe('sudo yum -y install ntp')
 
-    with open('/etc/ntp.conf', 'r') as f:
-            ntp_conf = f.read()
+    #with open('/etc/ntp.conf', 'r') as f:
+    #        ntp_conf = f.read()
 
     # Create a list of ntp server pools
-    server_list = ""
-    for i in range(0, 4):
-        server_list += "server {0}.pool.ntp.org\n".format(i)
+    #server_list = ""
+    #for i in range(0, 4):
+    #    server_list += "server {0}.pool.ntp.org\n".format(i)
 
     # Overwrite the single ubuntu ntp server with the server pools
-    ntp_conf = ntp_conf.replace('server ntp.ubuntu.com', server_list)
+    #ntp_conf = ntp_conf.replace('server ntp.ubuntu.com', server_list)
 
-    with open('/etc/ntp.conf', 'w') as f:
-        f.write(ntp_conf)
+    #with open('/etc/ntp.conf', 'w') as f:
+    #    f.write(ntp_conf)
 
     # Restart the service
-    logger.exe('sudo service ntp stop')
-    logger.exe('sudo ntpdate pool.ntp.org')
-    logger.exe('sudo service ntp start')
+    #logger.exe('sudo service ntpd stop')
+    #logger.exe('sudo ntpdate pool.ntp.org')
+    #logger.exe('sudo service ntpd start')
 
 
 def additional_pre_configurations():
