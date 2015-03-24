@@ -124,7 +124,7 @@ def create_initd():
     exe('sudo chmod 755 /etc/init.d/start-ami-script.sh')
 
     # Setup AMI Script to start on boot
-    exe('sudo update-rc.d -f start-ami-script.sh start 99 2 3 4 5 .')
+    exe('sudo chkconfig --level 25 start-ami-script.sh on')
 
 def setup_limits_conf():
     # for packaged installs
