@@ -812,8 +812,9 @@ def construct_agent():
 
 
 def create_cassandra_directories(mnt_point, device):
-    logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
-    logger.exe('sudo mount -a')
+    if device:
+        logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
+        logger.exe('sudo mount -a')
 
     if conf.get_config("AMI", "RaidOnly"):
         output = logger.exe('id cassandra', expectError=True)
@@ -1001,8 +1002,8 @@ def prepare_for_raid():
         mnt_point = format_xfs(devices)
     # Single storage
     else:
-        logger.exe('sudo mkdir -p /cassandra-data/')
         mnt_point = '/cassandra-data/'
+        create_cassandra_directories(mnt_point, False)
         
     if not options.raidonly:
         # Change cassandra.yaml to point to the new data directories
