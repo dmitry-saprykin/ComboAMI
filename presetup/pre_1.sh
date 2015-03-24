@@ -15,7 +15,7 @@ sudo yum -y update
 #sudo tar xzf jdk-7u75-linux-x64.tar.gz
 #cd /opt/jdk1.7.0_75/
 #sudo alternatives --install /usr/bin/java java /opt/jdk1.7.0_75/bin/java 2
-sudo yum -y install java-1.7.0-openjdk
+sudo yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel
 alternatives --config java
 
 export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64/

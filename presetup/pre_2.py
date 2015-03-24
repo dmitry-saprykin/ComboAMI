@@ -47,7 +47,7 @@ def install_software():
     while True:
         output = exe('sudo yum -y install htop '
                      'emacs sysstat iftop binutils pssh pbzip2 xfsprogs '
-                     'zip unzip ruby openssl openssl-devel curl maven2 ant '
+                     'zip unzip ruby openssl openssl-devel curl maven2 ant ant-nodeps'
                      'zlib-devel lzo lzo-devel ntp subversion python-pip tree unzip ruby '
                      'xfsprogs dstat ethtool make gcc s3cmd')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
@@ -174,12 +174,12 @@ def allow_keyless_ssh():
     pass
 
 
-install_software()
+#install_software()
 setup_profiles()
 create_initd()
 setup_limits_conf()
 setup_sysctl()
-clear_commands()
+#clear_commands()
 
 # allow_keyless_ssh()
 
