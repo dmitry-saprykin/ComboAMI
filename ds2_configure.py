@@ -900,16 +900,16 @@ def mount_raid(devices):
     # Continuously create the Raid device, in case there are errors
     raid_created = False
     while not raid_created:
-        logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1}'.format(len(partitions), partion_list), expectError=True)
+        logger.exe('sudo mdadm --force --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1}'.format(len(partitions), partion_list), expectError=True)
         raid_created = True
 
-        logger.pipe('echo DEVICE {0}'.format(partion_list), 'sudo tee /etc/mdadm/mdadm.conf')
+        logger.pipe('echo DEVICE {0}'.format(partion_list), 'sudo tee /etc/mdadm.conf')
         time.sleep(5)
 
         # New parsing and elimination of the name= field due to 12.04's new RAID'ing methods
         response = logger.exe('sudo mdadm --examine --scan')[0]
         response = ' '.join(response.split(' ')[0:-1])
-        with open('/etc/mdadm/mdadm.conf', 'a') as f:
+        with open('/etc/mdadm.conf', 'a') as f:
             f.write(response)
         logger.exe('sudo update-initramfs -u')
 
