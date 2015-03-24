@@ -72,6 +72,7 @@ def initial_configurations():
         logger.info('Skipping initial configurations.')
 
 def write_bin_tools():
+    return
     with open('/usr/bin/datastax_support', 'w') as f:
         f.write("""#!/usr/bin/env python\nprint '''DataStax Support Links:
 
