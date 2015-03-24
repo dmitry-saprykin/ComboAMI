@@ -38,6 +38,30 @@ git clone https://github.com/dmitry-saprykin/ComboAMI.git datastax_ami
 cd datastax_ami
 git checkout $(head -n 1 presetup/VERSION)
 
+sudo yum -y install wget
+wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+sudo rpm -Uhv rpmforge-release*.rf.x86_64.rpm
+sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+cat > ./epel-apache-maven.repo << EOF
+[epel-apache-maven]
+name=maven from apache foundation.
+baseurl=http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6Server/x86_64/
+enabled=1
+skip_if_unavailable=1
+gpgcheck=0
+
+[epel-apache-maven-source]
+name=maven from apache foundation. - Source
+baseurl=http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6Server/SRPMS
+enabled=0
+skip_if_unavailable=1
+gpgcheck=0
+EOF
+sudo mv ./epel-apache-maven.repo /etc/yum.repos.d/epel-apache-maven.repo
+
+sudo yum -y groupinstall "Development Tools"
+sudo yum -y install openssl-devel
 
 # Begin the actual priming
 git pull

@@ -45,17 +45,17 @@ def install_software():
 
     # Install other recommended tools
     while True:
-        output = exe('sudo yum -y install libjna-java htop '
-                     'emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs '
-                     'zip unzip ruby openssl libopenssl-ruby curl maven2 ant '
-                     'liblzo2-dev ntp subversion python-pip tree unzip ruby '
+        output = exe('sudo yum -y install htop '
+                     'emacs sysstat iftop binutils pssh pbzip2 xfsprogs '
+                     'zip unzip ruby openssl openssl-devel curl maven2 ant '
+                     'zlib-devel lzo lzo-devel ntp subversion python-pip tree unzip ruby '
                      'xfsprogs dstat ethtool make gcc s3cmd')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install RAID setup
     while True:
-        output = exe('sudo yum -y --no-install-recommends install mdadm')
+        output = exe('sudo yum -y install mdadm')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
