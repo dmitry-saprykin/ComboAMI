@@ -58,12 +58,6 @@ def install_software():
         output = exe('sudo yum -y install mdadm')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
-    
-    # Install Cassandra
-    while True:
-        output = exe('sudo yum -y install cassandra20 cassandra20-tools')
-        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
-            break
 
     # Preinstall Maven packages as a convenience
     exe('sudo -u cassandra mvn install')

@@ -397,7 +397,7 @@ def clean_installation():
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
         else:
-            logger.exe('sudo yum install -y python-cql datastax-agent dsc21')
+            logger.exe('sudo yum install -y python-cql datastax-agent dsc20')
             conf.set_config('AMI', 'package', 'dsc21')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
