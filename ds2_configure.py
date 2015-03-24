@@ -985,7 +985,7 @@ def prepare_for_raid():
     logger.exe('sudo chmod 644 {0}'.format(file_to_open))
 
     # Create a list of devices
-    devices = glob.glob('/dev/xvd*')
+    devices = glob.glob('/dev/xvd*[0-9]')
     if '/dev/xvda1' in devices:
         devices.remove('/dev/xvda1')
     devices.sort()
@@ -998,11 +998,10 @@ def prepare_for_raid():
 
     # Not enough drives to RAID together.
     elif len(devices) == 1:
-        print devices
         mnt_point = format_xfs(devices)
     # Single storage
     else:
-        logger.exe('sudo mkdir -p /cassandra-data/' % hadoop_tmp_dir)
+        logger.exe('sudo mkdir -p /cassandra-data/')
         mnt_point = '/cassandra-data/'
         
     if not options.raidonly:
