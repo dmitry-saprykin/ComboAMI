@@ -1081,15 +1081,15 @@ def sync_clocks():
 def additional_pre_configurations():
     
     #setup for centos iptables rules
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 7000 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 7001 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 7199 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 9160 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 9042 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 61620 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 61621 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 8888 -j ACCEPT')
-    logger.exe('sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 7000 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 7001 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 7199 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 9160 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 9042 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 61620 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 61621 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 8888 -j ACCEPT')
+    logger.exe('sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT')
 
     logger.exe('sudo service iptables save')
     logger.exe('sudo service iptables restart')
