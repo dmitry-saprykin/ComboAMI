@@ -1079,6 +1079,21 @@ def sync_clocks():
 
 
 def additional_pre_configurations():
+    
+    #setup for centos iptables rules
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 7000 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 7001 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 7199 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 9160 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 9042 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 61620 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 61621 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 8888 -j ACCEPT')
+    logger.exe('sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT')
+
+    logger.exe('sudo service iptables save')
+    logger.exe('sudo service iptables restart')
+    
     # Get required keys for Ubuntu
     #logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
     #logger.exe('sudo apt-key add /home/cassandra/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
