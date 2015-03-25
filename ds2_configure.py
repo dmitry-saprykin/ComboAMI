@@ -478,7 +478,7 @@ def get_seed_list():
     time_in_loop = time.time()
     continue_loop = True
     logger.info('Reflector loop...')
-    retry_count = 10
+    retry_count = 50
     while continue_loop and retry_count > 0:
         retry_count -= 1
         if time.time() - time_in_loop > 10 * 60:
@@ -489,15 +489,17 @@ def get_seed_list():
         else:
             reflector = 'http://reflector2.datastax.com/reflector2.php'
 
-        req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
-                                    reflector,
-                                    instance_data['launchindex'],
-                                    instance_data['reservationid'],
-                                    instance_data['internalip'],
-                                    instance_data['publichostname'],
-                                    options.seed_indexes[1],
-                                    options.seed_indexes[2]
-                             ))
+        requestUri = '{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
+               reflector,
+               instance_data['launchindex'],
+               instance_data['reservationid'],
+               instance_data['internalip'],
+               instance_data['publichostname'],
+               options.seed_indexes[1],
+               options.seed_indexes[2]
+        )
+        logger.info(requestUri)
+        req = urllib2.Request(requestUri)
         req.add_header('User-agent', 'DataStaxSetup')
         try:
             response = urllib2.urlopen(req).read()
