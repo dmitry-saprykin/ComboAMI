@@ -63,13 +63,15 @@ def clear_motd():
     logger.exe('sudo touch /etc/motd')
 
 def curl_instance_data(url):
-    while True:
+    retry_cnt = 10
+    while retry_cnt > 0:
         try:
+            retry_cnt -= 1
             req = urllib2.Request(url)
             return req
         except urllib2.HTTPError:
             logger.info("Failed to grab %s..." % url)
-            time.sleep(5)
+            time.sleep(2)
 
 def read_instance_data(req):
     data = urllib2.urlopen(req).read()
@@ -341,7 +343,7 @@ def setup_repos():
     logger.exe('sudo yum -y update')
     time_in_loop = time.time()
     logger.info('Update loop...')
-    while time.time() - time_in_loop < 10 * 60:
+    while time.time() - time_in_loop < 2 * 60:
         output = logger.exe('sudo yum -y update')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
@@ -476,7 +478,9 @@ def get_seed_list():
     time_in_loop = time.time()
     continue_loop = True
     logger.info('Reflector loop...')
-    while continue_loop:
+    retry_count = 10
+    while continue_loop and retry_count > 0:
+        retry_count -= 1
         if time.time() - time_in_loop > 10 * 60:
             exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
@@ -816,24 +820,11 @@ def create_cassandra_directories(mnt_point, device):
         logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
         logger.exe('sudo mount -a')
 
-    if conf.get_config("AMI", "RaidOnly"):
-        output = logger.exe('id cassandra', expectError=True)
-        if output[1] or 'no such user' in output[0].lower():
-            while True:
-                logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
-                output = logger.exe('id cassandra', expectError=True)
-                if not output[1] and not 'no such user' in output[0].lower():
-                    break
-                time.sleep(1)
-
+    if conf.get_config("AMI", "RaidOnly"):        
         output = logger.exe('id opscenter-agent', expectError=True)
         if output[1] or 'no such user' in output[0].lower():
-            logger.pipe('yes','sudo adduser --no-create-home --disabled-password opscenter-agent')
-            while True:
-                output = logger.exe('id opscenter-agent', expectError=True)
-                if not output[1] and not 'no such user' in output[0].lower():
-                    break
-                time.sleep(1)
+            logger.pipe('yes','sudo useradd -M opscenter-agent')
+            time.sleep(5)
 
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
