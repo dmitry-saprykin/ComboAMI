@@ -157,7 +157,9 @@ def wait_for_seed():
         nodetoolStatement = "nodetool -h " + conf.get_config("AMI", "LeadingSeed") + " ring"
         logger.info(nodetoolStatement)
 
-        while True:
+        retry_count = 10
+        while retry_count > 0:
+            retry_count -= 1
             nodetool_out = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
 
             # get rid of substring included in new jvm options printout that was causing an infinite loop
