@@ -799,9 +799,13 @@ def construct_dse():
 
         logger.info('/etc/default/dse configured.')
 
-def construct_agent():
+def construct_agent():     
+    output = logger.exe('id opscenter-agent', expectError=True)
+    if output[1] or 'o such user' in output[0].lower():
+        logger.pipe('yes','sudo useradd -M opscenter-agent')
+        time.sleep(5)
     logger.exe('sudo mkdir -p /var/lib/datastax-agent/conf')
-    logger.exe('sudo chown cassandra:cassandra /var/lib/datastax-agent/conf')
+    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
 
     with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
         if options.opscenterip:
@@ -813,7 +817,6 @@ def construct_agent():
             f.write('use_ssl: 1')
 
     logger.exe('cat /var/lib/datastax-agent/conf/address.yaml')
-    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
     logger.info('address.yaml configured.')
 
 
@@ -824,7 +827,7 @@ def create_cassandra_directories(mnt_point, device):
 
     if conf.get_config("AMI", "RaidOnly"):        
         output = logger.exe('id opscenter-agent', expectError=True)
-        if output[1] or 'no such user' in output[0].lower():
+        if output[1] or 'o such user' in output[0].lower():
             logger.pipe('yes','sudo useradd -M opscenter-agent')
             time.sleep(5)
 
@@ -873,9 +876,11 @@ def mount_raid(devices):
 
     # Create a list of partitions to RAID
     logger.exe('sudo fdisk -l')
-    partitions = glob.glob('/dev/xvd*[0-9]')
+    partitions = glob.glob('/dev/xvd*')
     if '/dev/xvda1' in partitions:
         partitions.remove('/dev/xvda1')
+    if '/dev/xvda' in partitions:
+        partitions.remove('/dev/xvda')
     partitions.sort()
     logger.info('Partitions about to be added to RAID0 set: {0}'.format(partitions))
 
@@ -894,7 +899,7 @@ def mount_raid(devices):
     # Continuously create the Raid device, in case there are errors
     raid_created = False
     while not raid_created:
-        logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1} --force '.format(len(partitions), partion_list), expectError=True)
+        logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices={0} {1}'.format(len(partitions), partion_list), expectError=True)
         raid_created = True
 
         logger.pipe('echo DEVICE {0}'.format(partion_list), 'sudo tee /etc/mdadm.conf')
@@ -944,9 +949,11 @@ def format_xfs(devices):
 
     # Create a list of partitions to RAID
     logger.exe('sudo fdisk -l')
-    partitions = glob.glob('/dev/xvd*[0-9]')
+    partitions = glob.glob('/dev/xvd*')
     if '/dev/xvda1' in partitions:
         partitions.remove('/dev/xvda1')
+    if '/dev/xvda' in partitions:
+        partitions.remove('/dev/xvda')
     partitions.sort()
 
     logger.info('Formatting the new partition:')
@@ -979,9 +986,11 @@ def prepare_for_raid():
     logger.exe('sudo chmod 644 {0}'.format(file_to_open))
 
     # Create a list of devices
-    devices = glob.glob('/dev/xvd*[0-9]')
+    devices = glob.glob('/dev/xvd*')
     if '/dev/xvda1' in devices:
         devices.remove('/dev/xvda1')
+    if '/dev/xvda' in devices:
+        devices.remove('/dev/xvda')
     devices.sort()
     logger.info('Unformatted devices: {0}'.format(devices))
 
