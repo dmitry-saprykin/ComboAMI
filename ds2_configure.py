@@ -989,32 +989,24 @@ def prepare_for_raid():
     if len(devices) > 1:
         time.sleep(3) # was at 20
         mnt_point = mount_raid(devices)
-        mnt_point_dir = '/cassandra-data/'
-        create_cassandra_directories(mnt_point_dir, False)
-        mnt_points = [mnt_point, mnt_point_dir]
 
     # Not enough drives to RAID together.
     elif len(devices) == 1:
-        mnt_point = format_xfs(devices)        
-        mnt_point_dir = '/cassandra-data/'
-        create_cassandra_directories(mnt_point_dir, False)
-        mnt_points = [mnt_point, mnt_point_dir]        
+        mnt_point = format_xfs(devices)
     # Single storage
     else:
-        mnt_point_dir = '/cassandra-data/'
-        create_cassandra_directories(mnt_point_dir, False)
-        mnt_points = [mnt_point]
+        mnt_point = '/cassandra-data/'
+        create_cassandra_directories(mnt_point, False)
         
     if not options.raidonly:
         # Change cassandra.yaml to point to the new data directories
         with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
             yaml = f.read()
 
-        mnt_points = [os.path.join(mnt_point, 'cassandra', 'data') for mnt_point in mnt_points]        
-        yaml = yaml.replace('/var/lib/cassandra/data', "\n - ".join(mnt_points))
-        yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point_dir, 'cassandra', 'saved_caches'))
-        yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point_dir, 'cassandra', 'commitlog'))
-        yaml = yaml.replace('/var/log/cassandra', os.path.join(mnt_point_dir, 'cassandra', 'logs'))
+        yaml = yaml.replace('/var/lib/cassandra/data', os.path.join(mnt_point, 'cassandra', 'data'))
+        yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point, 'cassandra', 'saved_caches'))
+        yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point, 'cassandra', 'commitlog'))
+        yaml = yaml.replace('/var/log/cassandra', os.path.join(mnt_point, 'cassandra', 'logs'))
 
         # Increase phi_convict_threshold to account for EC2 noise
         yaml = yaml.replace('# phi_convict_threshold: 8', 'phi_convict_threshold: 12')
